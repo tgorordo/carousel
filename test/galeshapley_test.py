@@ -1,14 +1,28 @@
-import rich
+import logging, rich
+from rich.logging import RichHandler
+
 import polars as pl
 import polars.selectors as pls
 import numpy as np
-
-rng = np.random.default_rng()
 
 from polars.testing import assert_frame_equal
 
 import pytest
 from hypothesis import given, strategies as st
+
+import carousel as crsl
+
+
+logging.basicConfig(
+    level="NOTSET",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=True, tracebacks_suppress=[np, pl, pls])],
+)
+
+log = logging.getLogger("rich")
+
+rng = np.random.default_rng()
 
 
 @st.composite
@@ -30,8 +44,6 @@ def preferences(draw, names=["a", "b", "c"], choices=["A", "B", "C"]):
     )
     return p
 
-
-import carousel as crsl
 
 p = pl.DataFrame({"a": ["A", "C", "B"], "b": ["B", "A", "C"], "c": ["C", "B", "A"]})
 r = pl.DataFrame({"": ["A", "B", "C"], "a": [1, 3, 2], "b": [2, 1, 3], "c": [3, 2, 1]})

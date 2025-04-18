@@ -1,9 +1,18 @@
-import rich
+import logging, rich
+from rich.logging import RichHandler
+
+import itertools as it
 
 import polars as pl
 import polars.selectors as pls
 
-import itertools as it
+logging.basicConfig(
+    level="NOTSET",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=True, tracebacks_suppress=[pl, pls])],
+)
+log = logging.getLogger("rich")
 
 
 def rank_to_pref(ranking):
