@@ -18,3 +18,6 @@ clean:
 wipe:
   just clean
   rm -rf .venv
+
+lock:
+  uv pip compile pyproject.toml -o requirements.txt
