@@ -81,7 +81,7 @@ def test_prefs_tofrom_ranks(P):
     assert_frame_equal(crsl.rank_to_pref(crsl.pref_to_rank(P)), P, check_dtypes=False)
 
 
-def test_eg3_unstable():
+def test_eg2_unstable():
     applicant_rankings = pl.DataFrame(
         {
             "": ["A", "B", "C", "D"],
@@ -105,7 +105,7 @@ def test_eg3_unstable():
     assert crsl.check_unstable(match, applicant_rankings, reviewer_rankings)
 
 
-def test_eg3_isstable():
+def test_eg2_isstable():
     applicant_rankings = pl.DataFrame(
         {
             "": ["A", "B", "C", "D"],
