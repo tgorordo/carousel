@@ -17,7 +17,7 @@ compile:
 clean:
   uv run pyclean src test
   uv run ruff clean
-  rm -rf main.spec build dist .pytest_cache .hypothesis .benchmarks
+  rm -rf main.spec cmd.spec gui.spec build dist .pytest_cache .hypothesis .benchmarks
 
 wipe:
   just clean
