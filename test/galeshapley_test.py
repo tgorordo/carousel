@@ -82,15 +82,48 @@ def test_prefs_tofrom_ranks(P):
 
 
 def test_eg3_unstable():
-    applicant_rankings = pl.DataFrame({"": ["A", "B", "C", "D"], "a": [1, 2, 3, 4], "b": [1, 4, 3, 2], "c": [2, 1, 3, 4], "d": [4, 2, 3, 1]})
-    reviewer_rankings = pl.DataFrame({"": ["a", "b", "c", "d"], "A": [3, 4, 2, 1], "B": [3, 1, 4, 2], "C": [2, 3, 4, 1], "D": [3, 2, 1, 4] })
-    match = pl.DataFrame({"A" : ["a"], "B": ["b"], "C": ["c"], "D": ["d"]})
-    
+    applicant_rankings = pl.DataFrame(
+        {
+            "": ["A", "B", "C", "D"],
+            "a": [1, 2, 3, 4],
+            "b": [1, 4, 3, 2],
+            "c": [2, 1, 3, 4],
+            "d": [4, 2, 3, 1],
+        }
+    )
+    reviewer_rankings = pl.DataFrame(
+        {
+            "": ["a", "b", "c", "d"],
+            "A": [3, 4, 2, 1],
+            "B": [3, 1, 4, 2],
+            "C": [2, 3, 4, 1],
+            "D": [3, 2, 1, 4],
+        }
+    )
+    match = pl.DataFrame({"A": ["a"], "B": ["b"], "C": ["c"], "D": ["d"]})
+
     assert crsl.check_unstable(match, applicant_rankings, reviewer_rankings)
 
+
 def test_eg3_isstable():
-    applicant_rankings = pl.DataFrame({"": ["A", "B", "C", "D"], "a": [1, 2, 3, 4], "b": [1, 4, 3, 2], "c": [2, 1, 3, 4], "d": [4, 2, 3, 1]})
-    reviewer_rankings = pl.DataFrame({"": ["a", "b", "c", "d"], "A": [3, 4, 2, 1], "B": [3, 1, 4, 2], "C": [2, 3, 4, 1], "D": [3, 2, 1, 4] })
-    match = pl.DataFrame({"A" : ["c"], "B": ["d"], "C": ["a"], "D": ["b"]})
-    
+    applicant_rankings = pl.DataFrame(
+        {
+            "": ["A", "B", "C", "D"],
+            "a": [1, 2, 3, 4],
+            "b": [1, 4, 3, 2],
+            "c": [2, 1, 3, 4],
+            "d": [4, 2, 3, 1],
+        }
+    )
+    reviewer_rankings = pl.DataFrame(
+        {
+            "": ["a", "b", "c", "d"],
+            "A": [3, 4, 2, 1],
+            "B": [3, 1, 4, 2],
+            "C": [2, 3, 4, 1],
+            "D": [3, 2, 1, 4],
+        }
+    )
+    match = pl.DataFrame({"A": ["c"], "B": ["d"], "C": ["a"], "D": ["b"]})
+
     assert crsl.check_stable(match, applicant_rankings, reviewer_rankings)
