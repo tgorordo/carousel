@@ -20,9 +20,22 @@ py-cpuinfo==9.0.0
     # via pytest-benchmark
 pygments==2.19.1
     # via rich
+pyside6==6.9.0
+    # via carousel (pyproject.toml)
+pyside6-addons==6.9.0
+    # via pyside6
+pyside6-essentials==6.9.0
+    # via
+    #   pyside6
+    #   pyside6-addons
 pytest==8.3.5
     # via pytest-benchmark
 pytest-benchmark==5.1.0
     # via carousel (pyproject.toml)
 rich==14.0.0
     # via carousel (pyproject.toml)
+shiboken6==6.9.0
+    # via
+    #   pyside6
+    #   pyside6-addons
+    #   pyside6-essentials
