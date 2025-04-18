@@ -6,35 +6,35 @@ import polars.selectors as pls
 import itertools as it
 
 
-def rank_to_pref(R):
+def rank_to_pref(ranking):
     """Converts a ranking to a preference."""
-    id_col_name = R.select(pls.by_index(0)).to_series().name
-    P = R.select(
-        [pl.col(id_col_name).sort_by(c).alias(c) for c in R.columns if c != id_col_name]
+    id_col_name = ranking.select(pls.by_index(0)).to_series().name
+    preferences = ranking.select(
+        [pl.col(id_col_name).sort_by(c).alias(c) for c in ranking.columns if c != id_col_name]
     )
-    return P
+    return preferences
 
 
-def pref_to_rank(P):
+def pref_to_rank(preferences):
     """Converts a preference to a ranking."""
-    o = P.select(
-        pl.concat_list(P.columns).explode().unique().sort().alias("")
+    o = preferences.select(
+        pl.concat_list(preferences.columns).explode().unique().sort().alias("")
     )  # .with_row_index(offset=1)
 
-    r = pl.concat(
+    ranking = pl.concat(
         [
             o.join(
-                P.with_row_index(offset=1),
+                preferences.with_row_index(offset=1),
                 how="full",
                 left_on="",
                 right_on=c,
                 maintain_order="left",
             ).select(pl.col("index").alias(c))
-            for c in P.columns
+            for c in preferences.columns
         ],
         how="horizontal",
     )
-    return pl.concat([o, r], how="horizontal")
+    return pl.concat([o, ranking], how="horizontal")
 
 
 """"
@@ -50,8 +50,8 @@ def ranking_matrix(A, B):
 """
 
 
-def check_valid_pref(P):
-    repeats = P.select(
+def check_valid_pref(preferences):
+    repeats = preferences.select(
         (~pl.all_horizontal((pl.all().is_unique() | pl.all().is_null()).all())).alias(
             "repeats"
         )
@@ -59,8 +59,8 @@ def check_valid_pref(P):
     return not repeats
 
 
-def check_valid_rank(R):
-    ties = R.select(
+def check_valid_rank(ranking):
+    ties = ranking.select(
         (~pl.all_horizontal((pl.all().is_unique() | pl.all().is_null()).all())).alias(
             "ties"
         )
@@ -78,8 +78,8 @@ def check_valid_assgn(assgn, applicants, reviewers):
     pass
 
 
-def get_rank(ranking, ranker, rankee):
-    idx = ranking.select(pl.arg_where(pl.col("") == rankee)).item()
+def get_rank(ranking, ranker, ranked):
+    idx = ranking.select(pl.arg_where(pl.col("") == ranked)).item()
     return ranking[ranker][idx]
 
 
@@ -109,8 +109,10 @@ def check_stable(*args, **kwargs):
     return not check_unstable(*args, **kwargs)
 
 
-def deferred_acceptance(A, R):
+def deferred_acceptance(applicant_ranking, reviewer_ranking):
     """Find the Gale-Shapley deferred-acceptance stable matching for preferences A, R."""
+    applicants = applicant_ranking.columns[1:]
+    reviewers = reviewer_ranking.columns[1:]
     # TODO - the core algorithm!
     pass
 

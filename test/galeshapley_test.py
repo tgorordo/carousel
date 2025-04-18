@@ -82,7 +82,7 @@ def test_prefs_tofrom_ranks(P):
 
 
 def test_eg2_unstable():
-    applicant_rankings = pl.DataFrame(
+    ar = pl.DataFrame(
         {
             "": ["A", "B", "C", "D"],
             "a": [1, 2, 3, 4],
@@ -91,7 +91,7 @@ def test_eg2_unstable():
             "d": [4, 2, 3, 1],
         }
     )
-    reviewer_rankings = pl.DataFrame(
+    rr = pl.DataFrame(
         {
             "": ["a", "b", "c", "d"],
             "A": [3, 4, 2, 1],
@@ -102,11 +102,11 @@ def test_eg2_unstable():
     )
     match = pl.DataFrame({"A": ["a"], "B": ["b"], "C": ["c"], "D": ["d"]})
 
-    assert crsl.check_unstable(match, applicant_rankings, reviewer_rankings)
+    assert crsl.check_unstable(match, ar, rr)
 
 
 def test_eg2_isstable():
-    applicant_rankings = pl.DataFrame(
+    ar = pl.DataFrame(
         {
             "": ["A", "B", "C", "D"],
             "a": [1, 2, 3, 4],
@@ -115,7 +115,7 @@ def test_eg2_isstable():
             "d": [4, 2, 3, 1],
         }
     )
-    reviewer_rankings = pl.DataFrame(
+    rr = pl.DataFrame(
         {
             "": ["a", "b", "c", "d"],
             "A": [3, 4, 2, 1],
@@ -126,4 +126,4 @@ def test_eg2_isstable():
     )
     match = pl.DataFrame({"A": ["c"], "B": ["d"], "C": ["a"], "D": ["b"]})
 
-    assert crsl.check_stable(match, applicant_rankings, reviewer_rankings)
+    assert crsl.check_stable(match, ar, rr)
