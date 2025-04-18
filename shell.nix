@@ -1,5 +1,5 @@
 { pkgs ? import <nixpkgs> {}}:
 
 pkgs.mkShellNoCC {
-    packages = with pkgs; [ uv ];
+    packages = with pkgs; [ just uv ];
 }
