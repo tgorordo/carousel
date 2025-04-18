@@ -10,10 +10,13 @@ test:
 format:
   uv run ruff format src test
 
+compile:
+  uv run pyinstaller src/main.py
+
 clean:
   uv run pyclean src test
   uv run ruff clean
-  rm -rf .pytest_cache .hypothesis .benchmarks
+  rm -rf main.spec build dist .pytest_cache .hypothesis .benchmarks
 
 wipe:
   just clean

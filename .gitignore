@@ -5,6 +5,10 @@ __pycache__/
 .venv/
 venv/
 
+main.spec
+build/
+dist/
+
 .ipynb_checkpoints
 .ruff_cache/
 .pytest_cache/
