@@ -37,7 +37,7 @@ It's possible to only use only default Python tooling, if so desired, via the
 
 TODO
 
-#### Convenience `direnv` and `nix` environment management.
+#### Convenience [`direnv`](https://github.com/direnv/direnv) and [`nix`](https://github.com/NixOS/nix) environment management and [`just`](https://github.com/casey/just) taskrunner.
 TODO
 
 ### Matching: Input & Output
