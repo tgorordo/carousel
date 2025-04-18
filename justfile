@@ -13,7 +13,7 @@ format:
 clean:
   uv run pyclean src test
   uv run ruff clean
-  rm -rf .pytest_cache .hypothesis
+  rm -rf .pytest_cache .hypothesis .benchmarks
 
 wipe:
   just clean
