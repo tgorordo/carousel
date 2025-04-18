@@ -10,7 +10,11 @@ def rank_to_pref(ranking):
     """Converts a ranking to a preference."""
     id_col_name = ranking.select(pls.by_index(0)).to_series().name
     preferences = ranking.select(
-        [pl.col(id_col_name).sort_by(c).alias(c) for c in ranking.columns if c != id_col_name]
+        [
+            pl.col(id_col_name).sort_by(c).alias(c)
+            for c in ranking.columns
+            if c != id_col_name
+        ]
     )
     return preferences
 
