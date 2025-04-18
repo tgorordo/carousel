@@ -9,7 +9,9 @@ dependencies = [
     "click>=8.1.8",
     "numpy>=2.2.4",
     "polars>=1.26.0",
+    "pyside6>=6.9.0",
     "pytest-benchmark>=5.1.0",
+    "qtpy>=2.4.3",
     "rich>=14.0.0",
 ]
 

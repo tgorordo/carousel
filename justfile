@@ -11,7 +11,8 @@ format:
   uv run ruff format src test
 
 compile:
-  uv run pyinstaller src/main.py
+  uv run pyinstaller src/cmd.py
+  uv run pyinstaller src/gui.py
 
 clean:
   uv run pyclean src test
