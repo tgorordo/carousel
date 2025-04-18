@@ -85,7 +85,7 @@ def get_rank(ranking, ranker, rankee):
 
 def check_unstable(match, applicant_ranking, reviewer_ranking):
     applicants = applicant_ranking.columns[1:]  # assume unique applicants
-    for a, b in it.combinations(applicants, 2):
+    for a, b in it.permutations(applicants, 2):
         A = (
             match.select(c for c in match.iter_columns() if a in c).to_series().name
         )  # the reviewer a is matched to
@@ -100,16 +100,6 @@ def check_unstable(match, applicant_ranking, reviewer_ranking):
             reviewer_ranking, A, a
         )
         if b_prefers_A and A_prefers_b:
-            return True
-
-        # or
-        a_prefers_B = get_rank(applicant_ranking, a, B) < get_rank(
-            applicant_ranking, a, A
-        )
-        B_prefers_a = get_rank(reviewer_ranking, B, a) < get_rank(
-            reviewer_ranking, B, b
-        )
-        if a_prefers_B and B_prefers_a:
             return True
     # else
     return False
