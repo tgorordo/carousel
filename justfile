@@ -24,4 +24,4 @@ wipe:
   rm -rf .venv
 
 lock:
-  uv pip compile pyproject.toml -o requirements.txt --all-extras
+  uv pip compile pyproject.toml -o requirements.txt --group dev
