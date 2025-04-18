@@ -9,5 +9,3 @@ venv/
 .ruff_cache/
 .pytest_cache/
 .benchmarks/
-
-uv.lock
