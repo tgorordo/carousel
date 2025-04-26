@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Data Entry Form</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            font-weight: normal;
+        }
+        
+        h2 {
+            color: #333;
+            font-weight: normal;
+        }
+        
+        .container {
+            background: #fff;
+            border-radius: 3px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .fill-default-control {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .fill-default-btn {
+            background: #777;
+            margin-right: 10px;
+        }
+        
+        .fill-default-btn:hover {
+            background: #555;
+        }
+        
+        .disabled-table {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        button {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            font-family: Georgia, serif;
+        }
+        
+        button:hover {
+            background: #333;
+        }
+        
+        button.secondary {
+            background: #999;
+        }
+        
+        button.secondary:hover {
+            background: #777;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 600px;
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            position: relative;
+        }
+        
+        th input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-family: Georgia, serif;
+        }
+        
+        td input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-family: Georgia, serif;
+        }
+        
+        .file-upload {
+            margin-bottom: 20px;
+        }
+        
+        .file-upload label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .file-info {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .submit-section {
+            text-align: center;
+            border-bottom: none;
+        }
+        
+        .submit-button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            font-family: Georgia, serif;
+        }
+        
+        .submit-button:hover {
+            background: #222;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background-color: #f1f1f1;
+            margin-top: 10px;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #666;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 3px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #f1f5f1;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        
+        .error {
+            background-color: #f5f1f1;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 3px 3px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: #fff;
+            border-bottom: 1px solid #fff;
+            position: relative;
+            top: 1px;
+        }
+        
+        .tab-content {
+            display: none;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border-left-color: #555;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    (<a href="https://pages.uoregon.edu/tgorordo">Back to ~/tgorordo</a>)
+    <div class="container">
+        <h1>Carousel Stable Matcher</h1>  
+        
+        <div class="tabs">
+            <div class="tab active" id="table-tab">Table Input</div>
+            <div class="tab" id="file-tab">File Upload</div>
+        </div>
+        
+        <form id="data-form" action="/cgi-bin/carousel.py" method="post" enctype="multipart/form-data">
+            <div class="tab-content active" id="table-content">
+                <!-- First Table Section -->
+                <div class="form-section">
+                    <div class="form-header">
+                        <h2>Applicant Preferences</h2>
+                        <div class="controls">
+                            <button type="button" id="add-column-1">Add Column</button>
+                            <button type="button" id="add-row-1">Add Row</button>
+                            <button type="button" class="secondary" id="remove-column-1">Remove Column</button>
+                            <button type="button" class="secondary" id="remove-row-1">Remove Row</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="data-table-1">
+                            <thead>
+                                <tr id="header-row-1">
+                                    <th><input type="text" placeholder="Applicant 1" name="table1_header_0" required></th>
+                                    <th><input type="text" placeholder="Applicant 2" name="table1_header_1" required></th>
+                                    <th><input type="text" placeholder="Applicant 3" name="table1_header_2" required></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" placeholder="Preference 1..." name="table1_row_0_col_0"></td>
+                                    <td><input type="text" placeholder="Preference 1..." name="table1_row_0_col_1"></td>
+                                    <td><input type="text" placeholder="Preference 1..." name="table1_row_0_col_2"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" name="table1_row_1_col_0"></td>
+                                    <td><input type="text" name="table1_row_1_col_1"></td>
+                                    <td><input type="text" name="table1_row_1_col_2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Second Table Section -->
+                <div class="form-section">
+                    <div class="form-header">
+                        <h2>Reviewer Preferences</h2>
+                        <div class="controls-container">
+                            <div class="controls">
+                                <button type="button" id="add-column-2">Add Column</button>
+                                <button type="button" id="add-row-2">Add Row</button>
+                                <button type="button" class="secondary" id="remove-column-2">Remove Column</button>
+                                <button type="button" class="secondary" id="remove-row-2">Remove Row</button>
+                            </div>
+                            <div class="fill-default-control">
+                                <label for="fill-default">
+                                    <button type="button" id="fill-default-btn" class="fill-default-btn">Fill Default</button>
+                                    <input type="checkbox" id="fill-default" name="fill_default"> (Use default uniform preferences.)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container" id="table2-container">
+                        <table id="data-table-2">
+                            <thead>
+                                <tr id="header-row-2">
+                                    <th><input type="text" placeholder="Reviewer 1" name="table2_header_0" required></th>
+                                    <th><input type="text" placeholder="Reviewer 2" name="table2_header_1" required></th>
+                                    <th><input type="text" placeholder="Reviewer 3" name="table2_header_2" required></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" placeholder="Preference 1..." name="table2_row_0_col_0"></td>
+                                    <td><input type="text" placeholder="Preference 1..." name="table2_row_0_col_1"></td>
+                                    <td><input type="text" placeholder="Preference 1..." name="table2_row_0_col_2"></td>
+
+                                </tr>
+                                <tr>
+                                    <td><input type="text" name="table2_row_1_col_0"></td>
+                                    <td><input type="text" name="table2_row_1_col_1"></td>
+                                    <td><input type="text" name="table2_row_1_col_2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="file-content">
+                <div class="form-section">
+                    <div class="file-upload">
+                        <label for="file-input">Upload a CSV or Excel file:</label>
+                        <input type="file" id="file-input" name="file" accept=".csv,.xlsx,.xls">
+                        <div class="file-info" id="file-info"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section submit-section">
+                <button type="submit" class="submit-button">
+                    <span id="spinner" class="spinner"></span>
+                    <span id="submit-text">Submit Preferences</span>
+                </button>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="message" id="message"></div>
+            </div>
+
+        <div class="container">
+        <details>
+          <summary><b>Input/Output Format Documentation</b></summary>
+            <p>
+          The matcher assumes a specific tabular scheme for the input data - to read more about how this works see the 
+              <a href="https://github.com/tgorordo/carousel">README</a>.
+
+          You can enter preference information directly in the tables above, or upload an Excel spreadsheet with
+          two sheets of preferences, or a CSV containing a ranking matrix.
+            </p> More on each format scheme:
+
+
+
+          <h3>Tabular Input</h3>
+            You can enter tables of preferences directly in the first tab of the form above.
+          
+          <h4>Example:</h4>
+
+          <h3>File Upload</h3>
+            
+            For more complicated input, a file upload might be preferable to table form submission
+            (e.g. if there's a validation issue you won't have to manually re-enter the table, just tweak and re-upload the file).
+          
+            Two file formats are supported, Excel and CSV:
+            
+          <h4>Excel</h4>
+
+          <h4>CSV</h4>
+
+        </details>
+        </div>
+        </form>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.getElementById('table-tab').addEventListener('click', () => {
+            switchTab('table');
+        });
+        
+        document.getElementById('file-tab').addEventListener('click', () => {
+            switchTab('file');
+        });
+        
+        function switchTab(tabName) {
+            // Hide all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show the selected tab and content
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.getElementById(`${tabName}-content`).classList.add('active');
+        }
+        
+        // Table manipulation functions
+        function setupTableControls(tableNumber) {
+            const addColumnBtn = document.getElementById(`add-column-${tableNumber}`);
+            const addRowBtn = document.getElementById(`add-row-${tableNumber}`);
+            const removeColumnBtn = document.getElementById(`remove-column-${tableNumber}`);
+            const removeRowBtn = document.getElementById(`remove-row-${tableNumber}`);
+            const dataTable = document.getElementById(`data-table-${tableNumber}`);
+            const headerRow = document.getElementById(`header-row-${tableNumber}`);
+            
+            addColumnBtn.addEventListener('click', () => {
+                const colCount = headerRow.cells.length;
+                
+                // Add header cell
+                const newHeader = document.createElement('th');
+                newHeader.innerHTML = `<input type="text" placeholder="Column ${colCount + 1}" name="table${tableNumber}_header_${colCount}" required>`;
+                headerRow.appendChild(newHeader);
+                
+                // Add cell to each row
+                const rows = dataTable.querySelectorAll('tbody tr');
+                rows.forEach((row, rowIndex) => {
+                    const newCell = document.createElement('td');
+                    newCell.innerHTML = `<input type="text" name="table${tableNumber}_row_${rowIndex}_col_${colCount}">`;
+                    row.appendChild(newCell);
+                });
+            });
+            
+            addRowBtn.addEventListener('click', () => {
+                const tbody = dataTable.querySelector('tbody');
+                const rows = tbody.querySelectorAll('tr');
+                const rowCount = rows.length;
+                const colCount = headerRow.cells.length;
+                
+                // Create new row
+                const newRow = document.createElement('tr');
+                
+                // Add cells to the new row
+                for (let i = 0; i < colCount; i++) {
+                    const newCell = document.createElement('td');
+                    newCell.innerHTML = `<input type="text" name="table${tableNumber}_row_${rowCount}_col_${i}">`;
+                    newRow.appendChild(newCell);
+                }
+                
+                tbody.appendChild(newRow);
+            });
+            
+            removeColumnBtn.addEventListener('click', () => {
+                const colCount = headerRow.cells.length;
+                
+                if (colCount <= 1) {
+                    alert('Table must have at least one column.');
+                    return;
+                }
+                
+                // Remove the last header cell
+                headerRow.deleteCell(colCount - 1);
+                
+                // Remove the last cell from each row
+                const rows = dataTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    row.deleteCell(colCount - 1);
+                });
+            });
+            
+            removeRowBtn.addEventListener('click', () => {
+                const tbody = dataTable.querySelector('tbody');
+                const rows = tbody.querySelectorAll('tr');
+                
+                if (rows.length <= 1) {
+                    alert('Table must have at least one row.');
+                    return;
+                }
+                
+                // Remove the last row
+                tbody.removeChild(rows[rows.length - 1]);
+            });
+        }
+        
+        // Setup controls for both tables
+        setupTableControls(1);
+        setupTableControls(2);
+        
+        // Fill Default functionality for Table 2
+        const fillDefaultCheckbox = document.getElementById('fill-default');
+        const fillDefaultBtn = document.getElementById('fill-default-btn');
+        const table2Container = document.getElementById('table2-container');
+        
+        fillDefaultBtn.addEventListener('click', () => {
+            fillDefaultCheckbox.checked = !fillDefaultCheckbox.checked;
+            toggleTable2State();
+        });
+        
+        fillDefaultCheckbox.addEventListener('change', toggleTable2State);
+        
+        function toggleTable2State() {
+            if (fillDefaultCheckbox.checked) {
+                table2Container.classList.add('disabled-table');
+            } else {
+                table2Container.classList.remove('disabled-table');
+            }
+        }
+        
+        // File upload handling
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('file-info');
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileInfo.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            } else {
+                fileInfo.textContent = '';
+            }
+        });
+        
+        // Form submission
+        const dataForm = document.getElementById('data-form');
+        const submitButton = document.querySelector('.submit-button');
+        const spinner = document.getElementById('spinner');
+        const submitText = document.getElementById('submit-text');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const message = document.getElementById('message');
+        
+        dataForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show spinner and disable button
+            spinner.style.display = 'inline-block';
+            submitButton.disabled = true;
+            submitText.textContent = 'Submitting...';
+            progressBar.style.display = 'block';
+            message.style.display = 'none';
+            message.className = 'message';
+            
+            // Collect form data
+            const formData = new FormData(dataForm);
+            
+            // Add a flag to indicate which tab is active
+            formData.append('input_type', document.getElementById('table-content').classList.contains('active') ? 'table' : 'file');
+            
+            // If table input is active, add table structure info
+            if (document.getElementById('table-content').classList.contains('active')) {
+                // Table 1 info
+                const colCount1 = document.getElementById('header-row-1').cells.length;
+                const rowCount1 = document.getElementById('data-table-1').querySelectorAll('tbody tr').length;
+                formData.append('table1_col_count', colCount1);
+                formData.append('table1_row_count', rowCount1);
+                
+                // Table 2 info
+                const colCount2 = document.getElementById('header-row-2').cells.length;
+                const rowCount2 = document.getElementById('data-table-2').querySelectorAll('tbody tr').length;
+                formData.append('table2_col_count', colCount2);
+                formData.append('table2_row_count', rowCount2);
+                formData.append('table2_use_default', document.getElementById('fill-default').checked);
+            }
+            
+            // Simulate upload progress (in a real application, you'd track actual upload progress)
+            let width = 0;
+            const progressInterval = setInterval(() => {
+                if (width >= 90) {
+                    clearInterval(progressInterval);
+                } else {
+                    width += 5;
+                    progress.style.width = width + '%';
+                }
+            }, 100);
+            
+            // Send form data to server
+            fetch(dataForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                clearInterval(progressInterval);
+                progress.style.width = '100%';
+                
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Show success message
+                message.textContent = data.message || 'Data submitted successfully!';
+                message.classList.add('success');
+                message.style.display = 'block';
+            })
+            .catch(error => {
+                // Show error message
+                console.error('Error:', error);
+                message.textContent = 'An error occurred while submitting the data. Please try again.';
+                message.classList.add('error');
+                message.style.display = 'block';
+            })
+            .finally(() => {
+                // Hide spinner and re-enable button
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                    submitButton.disabled = false;
+                    submitText.textContent = 'Submit Data';
+                    progressBar.style.display = 'none';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

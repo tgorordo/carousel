@@ -10,7 +10,6 @@ dependencies = [
     "numpy>=2.2.4",
     "polars>=1.26.0",
     "pyside6>=6.9.0",
-    "pytest-benchmark>=5.1.0",
     "rich>=14.0.0",
 ]
 
@@ -28,11 +27,17 @@ dev = [
     "pyinstaller>=6.12.0",
     "pyright>=1.1.398",
     "pytest>=8.3.5",
+    "pytest-benchmark>=5.1.0",
     "ruff>=0.11.2",
+]
+srv = [
+    "legacy-cgi>=2.6.3",
+    "python-dotenv>=1.1.0",
 ]
   
 [pytest]
 testpaths = "test"
+log_cli = true
 
 [tool.pyright]
 include = ["src"]

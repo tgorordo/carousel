@@ -1,11 +1,14 @@
 run:
   uv run carousel
 
+python *arguments:
+  uv run python -c "import code; from rich import pretty; pretty.install(); code.interact()" {{arguments}}
+
 check:
   uv run pyright src
 
 test:
-  uv run pytest -vv --tb=short
+  uv run pytest -vvv --tb=short --log-cli-level=INFO
 
 format:
   uv run ruff format src test

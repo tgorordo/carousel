@@ -1,18 +1,28 @@
 import logging, rich
 from rich.logging import RichHandler
 
+rich.traceback.install()
+
 import itertools as it
+import numpy as np
 
 import polars as pl
 import polars.selectors as pls
 
 logging.basicConfig(
-    level="NOTSET",
+    level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True, tracebacks_suppress=[pl, pls])],
+    handlers=[
+        RichHandler(
+            show_time=True,
+            markup=True,
+            rich_tracebacks=True,
+            tracebacks_suppress=[pl, pls, np],
+        )
+    ],
 )
-log = logging.getLogger("rich")
+log = logging.getLogger(__name__)
 
 
 def rank_to_pref(ranking):
@@ -64,6 +74,7 @@ def ranking_matrix(A, B):
 
 
 def check_valid_pref(preferences):
+    """A valid set of preferences has all unique entries in each column, TODO"""
     repeats = preferences.select(
         (~pl.all_horizontal((pl.all().is_unique() | pl.all().is_null()).all())).alias(
             "repeats"
@@ -73,6 +84,7 @@ def check_valid_pref(preferences):
 
 
 def check_valid_rank(ranking):
+    """A valid ranking has no ties, TODO"""
     ties = ranking.select(
         (~pl.all_horizontal((pl.all().is_unique() | pl.all().is_null()).all())).alias(
             "ties"
@@ -87,6 +99,16 @@ def check_valid_match(match, applicants, reviewers):
 
 
 def check_valid_assgn(assgn, applicants, reviewers):
+    # TODO
+    pass
+
+
+def assgn_to_match(assgn):
+    # TODO
+    pass
+
+
+def match_to_assgn(match):
     # TODO
     pass
 
@@ -122,22 +144,56 @@ def check_stable(*args, **kwargs):
     return not check_unstable(*args, **kwargs)
 
 
-def deferred_acceptance(applicant_ranking, reviewer_ranking):
+def deferred_acceptance(applicant_rankings, reviewer_rankings):
     """Find the Gale-Shapley deferred-acceptance stable matching for preferences A, R."""
-    applicants = applicant_ranking.columns[1:]
-    reviewers = reviewer_ranking.columns[1:]
-    # TODO - the core algorithm!
-    pass
+    reviewer_rankings = reviewer_rankings.rename(
+        {reviewer_rankings.columns[0]: "applicant"}
+    )
 
+    app_prefs = rank_to_pref(applicant_rankings)
+    offers = app_prefs.transpose(
+        include_header=True,
+        header_name="applicant",
+        column_names=["pref" + str(i + 1) for i in range(app_prefs.width)],
+    ).with_columns(pl.coalesce(pl.all().exclude("applicant")).alias("offer"))
 
-def assgn_to_match(assgn):
-    # TODO
-    pass
+    # offers = pl.concat(pl.align_frames(offers, reviewer_rankings, on="applicant"), how="horizontal")
+    offers = pl.concat([offers, reviewer_rankings], how="align_left")
 
+    match = pl.DataFrame(
+        {
+            r: offers.select(pl.col("applicant", "offer").sort_by(r))
+            .select(
+                pl.when(pl.col("offer").eq(r)).then(pl.col("applicant")).otherwise(None)
+            )
+            .select(pl.all().fill_null(strategy="backward").first())
+            .to_series()
+            for r in reviewer_rankings.columns[1:]
+        }
+    )  # .select(pl.all().fill_null(strategy="backward").first())
 
-def match_to_assgn(match):
-    # TODO
-    pass
+    # while check_unstable(match, applicant_rankings, reviewer_rankings):
+    while match.select(pl.any_horizontal(pl.all().has_nulls())).item():
+        # TODO null applicant preferences that rejected
+
+        rejected_applicants = offers.select(
+            pl.col("applicant").is_in(match.row(0)).alias("matched")
+        )
+
+        return match
+
+        offers = offers.with_columns(pl.col("pref"))
+
+        offers = offers.with_columns(
+            pl.coalesce(
+                # TODO: select prefn columns using a regex
+            ).alias("offer")
+        )
+
+        # TODO update match
+
+    # else if stable
+    return match
 
 
 def main() -> None:

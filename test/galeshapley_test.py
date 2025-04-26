@@ -1,26 +1,13 @@
-import logging, rich
-from rich.logging import RichHandler
-
 import polars as pl
 import polars.selectors as pls
 import numpy as np
 
 from polars.testing import assert_frame_equal
 
-import pytest
+import pytest, rich
 from hypothesis import given, strategies as st
 
 import carousel as crsl
-
-
-logging.basicConfig(
-    level="NOTSET",
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True, tracebacks_suppress=[np, pl, pls])],
-)
-
-log = logging.getLogger("rich")
 
 rng = np.random.default_rng()
 
@@ -57,8 +44,6 @@ def test_invalid_pref():
 
 
 def test_pref_to_rank():
-    rr = crsl.pref_to_rank(p)
-    rich.print(p, rr, r)
     assert_frame_equal(crsl.pref_to_rank(p), r, check_dtypes=False)
 
 
@@ -139,3 +124,12 @@ def test_eg2_isstable():
     match = pl.DataFrame({"A": ["c"], "B": ["d"], "C": ["a"], "D": ["b"]})
 
     assert crsl.check_stable(match, ar, rr)
+
+
+@given(
+    rankings(names=["a", "b", "c", "d"], choices=["A", "B", "C", "D"]),
+    rankings(names=["A", "B", "C", "D"], choices=["a", "b", "c", "d"]),
+)
+def test_defacc_isstable(applicant_rankings, reviewer_rankings):
+    match = crsl.deferred_acceptance(applicant_rankings, reviewer_rankings)
+    assert crsl.check_stable(match, applicant_rankings, reviewer_rankings)
