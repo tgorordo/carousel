@@ -1,3 +1,6 @@
+list:
+  just --list
+
 run:
   uv run carousel
 
@@ -20,7 +23,7 @@ compile:
 clean:
   uv run pyclean src test
   uv run ruff clean
-  rm -rf main.spec cli.spec gui.spec build dist .pytest_cache .hypothesis .benchmarks
+  rm -rf main.spec cli.spec gui.spec build dist .pytest_cache .hypothesis .benchmarks __marimo__
 
 wipe:
   just clean

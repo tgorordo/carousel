@@ -28,10 +28,16 @@ def deferred_acceptance(applicant_rankings, reviewer_rankings):
 
     # while check_unstable(match, applicant_rankings, reviewer_rankings):
     while match.select(pl.any_horizontal(pl.all().has_nulls())).item():
-        # TODO null applicant preferences that rejected
-
-        rejected_applicants = offers.select(
-            pl.col("applicant").is_in(match.row(0)).alias("matched")
+        # null applicant preferences that rejected
+        offers = offers.with_columns(
+            pl.when(
+                pl.col("applicant").is_in(match.row(0)).not_(),
+                pl.col(c).is_null().not_(),
+            )
+            .then(pl.lit(None))
+            .otherwise(c)
+            .alias(c)
+            for c in offers.select(pl.col("pref*")).columns
         )
 
         return match
