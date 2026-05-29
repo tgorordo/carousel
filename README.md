@@ -1,5 +1,5 @@
 # Carousel
-*A simple Stable Matching solver.*
+*A simple gale-shapley stable matcher for applicants to positions/assignments.*
 
 ## Examples
 Here are some usage examples:
