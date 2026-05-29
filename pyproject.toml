@@ -1,0 +1,41 @@
+[project]
+name = "carousel"
+version = "0.1.0"
+description = "A Stable Marriage Solver."
+readme = "README.md"
+authors = [{ name = "Thomas (Tom) C. Gorordo", email = "tcgorordo@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.2.4",
+    "polars>=1.26.0",
+]
+
+#[project.scripts]
+#carousel = "carousel:main"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "faker>=37.1.0",
+    "hypothesis>=6.130.8",
+    "marimo[recommended]>=0.13.6",
+    "pyclean>=3.1.0",
+    "pyinstaller>=6.12.0",
+    "pyright>=1.1.398",
+    "pytest>=8.3.5",
+    "pytest-benchmark>=5.1.0",
+    "ruff>=0.11.2",
+    "ty>=0.0.0a5",
+]
+
+  
+[pytest]
+testpaths = "test"
+log_cli = true
+
+[tool.pyright]
+include = ["src"]
+exclude = ["test"]

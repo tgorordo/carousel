@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Carousel - Stable Matcher </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+        }
+        input[type="submit"] {
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+<h1>Carousel: Stable Matcher - CGI Application Upload</h1>
+
+<div class="form-container">
+    <form action="./carousel.cgi" method="POST" enctype="multipart/form-data">
+        <label for="spreadsheet">Upload an assignment preference spreadsheet (.xlsx, .xls, .csv):</label>
+        <input type="file" id="spreadsheet" name="spreadsheet" accept=".xlsx,.xls,.csv" required>
+        <br>
+        <input type="submit" value="Upload and Match!">
+    </form>
+</div>
+
+<div class="explanation-container">
+
+<h2>About</h2>
+<p>This is an upload form for the <a href="https://github.com/tgorordo/carousel">carousel</a> stable matcher for ,
+mainly to help with <a href="https://blogs.uoregon.edu/physicsgsg/">UO Physics TA assignments</a>. 
+This form uses the <a href="https://service.uoregon.edu/TDClient/2030/Portal/KB/ArticleDet?ID=43069">UO pages.uoregon.edu CGI Capability</a>,
+so the implementation of smithy being invoked can be <a href="https://pages.uoregon.edu/tgorordo/files/carousel/"> inspected here</a>
+and you may also inspect the source of this page to verify that <a href="https://pages.uoregon.edu/tgorordo/files/carousel/src/cgi/carousel.cgi?source">this script<a> is called to invoke it - though
+you have to trust it to <a href="https://en.wikipedia.org/wiki/Quine_(computing)">quine</a> itself faithfully.
+</p>
+
+<p> A <a href=https://en.wikipedia.org/wiki/Stable_matching_problem>stable matching (of the "college admissions" problem)</a> is one in which there is no pair of, say, TA and course which would prefer
+each other over their respective assignment given by the matching. This form runs a version of the
+<a href="https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm">Gale-Shapley (1962) deferred-acceptance algorithm</a>, which finds the stable matching
+that is optimal for the TA preferrences. Other stable solutions can be found by using <a href="https://github.com/tgorordo/carousel">the underlying
+python application manually</a>.
+</p>
+
+<h3>Input: Expected Spreadsheet Format</h3>
+<p>A matching-preference spreadsheet should be organized as a list of TA assignment preferences
+and a list of course preferences/constraints, i.e. with the following structure:
+TODO</p>
+ 
+<h3>Output: Matching Format</h3>
+<p>The form will return a matching of TAs to course assignments of the form: TODO</p>
+</div>
+</body>
+<footer>
+  <hr>
+  <p>Author: <a href="https://pages.uoregon.edu/tgorordo">Thomas (Tom) C. Gorordo</a>
+     Source: <a href="https://github.com/tgorordo/pages.uoregon.edu">pages.uoregon.edu/tgorordo</a>,
+             <a href="https://github.com/tgorordo/carousel">carousel</a></p>
+</footer> 
+</html>
