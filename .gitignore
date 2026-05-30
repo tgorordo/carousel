@@ -1,0 +1,16 @@
+
+__pycache__/
+
+.venv
+.venv/
+venv/
+
+carouselcli.spec
+carouselgui.spec
+build/
+dist/
+
+.ipynb_checkpoints
+.ruff_cache/
+.pytest_cache/
+.benchmarks/
