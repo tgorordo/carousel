@@ -5,7 +5,7 @@ import numpy as np
 import polars as pl
 
 
-def GS_deferred_acceptance(
+def deferred_acceptance_GS(
     applicant_prefs: pl.DataFrame,
     position_prefs: pl.DataFrame,
     capacities: pl.DataFrame,
@@ -13,6 +13,7 @@ def GS_deferred_acceptance(
     app_col: str = "applicant",
     pos_col: str = "position",
     rank_col: str = "rank",
+    tiebreaker_seed: int = 1234,
 ) -> pl.DataFrame:
     """
     Compute the proposer-optimal Gale-Shapley deferred acceptance stable matching for a
@@ -39,6 +40,8 @@ def GS_deferred_acceptance(
     | applicant | position |
     """
 
+    rng = np.random.default_rng(tiebreaker_seed)
+
     app_idxs = (
         applicant_prefs.select(app_col).unique().sort(app_col).with_row_index("app_idx")
     )
@@ -50,11 +53,14 @@ def GS_deferred_acceptance(
     n_apps = app_idxs.height
     n_poss = pos_idxs.height
 
+    tie_break = rng.random(n_apps)
+
     ap = (
         applicant_prefs.join(app_idxs, on=app_col)
         .join(pos_idxs, on=pos_col)
         .sort(["app_idx", rank_col])
     )
+
     al = (
         ap.group_by("app_idx", maintain_order=True)
         .agg(pl.col("pos_idx"))
@@ -110,16 +116,16 @@ def GS_deferred_acceptance(
             heap = pos_heaps[p]
 
             if len(heap) < cap[p]:
-                heapq.heappush(heap, (-arank, a))
-                matched_pos[a] = a
+                heapq.heappush(heap, (-arank, tie_break[a], a))
+                matched_pos[a] = p
                 break
 
-            worst_neg_rank, worst_app = heap[0]
+            worst_neg_rank, worst_tie, worst_app = heap[0]
             worst_rank_current = -worst_neg_rank
 
             if arank < worst_rank_current:
-                heapq.heapreplace(heap, (-arank, a))
-                matched_pos[a] = a
+                heapq.heapreplace(heap, (-arank, tie_break[a], a))
+                matched_pos[a] = p
                 matched_pos[worst_app] = -1
 
                 free.append(worst_app)
